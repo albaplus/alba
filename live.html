@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Live Agora | Alba+</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --hulu-black: #0b0f14;
+      --hulu-dark: #111720;
+      --hulu-darker: #0a0e13;
+      --hulu-green: #1ce783;
+      --hulu-green-hover: #0faf63;
+      --hulu-white: #ffffff;
+      --hulu-gray: #9aa3ad;
+      --hulu-gray-light: #c0c6cf;
+      --live-red: #ff375f;
+      --channel-active: rgba(28, 231, 131, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--hulu-black);
+      color: var(--hulu-white);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+    aside {
+      width: 70px;
+      background: var(--hulu-darker);
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      position: fixed;
+      height: 100vh;
+      z-index: 100;
+      border-right: 1px solid rgba(28, 231, 131, 0.1);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+    }
+
+    aside:hover {
+      width: 220px;
+      box-shadow: 5px 0 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .logo-container {
+      padding: 0 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--hulu-green);
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+
+    .logo i {
+      font-size: 24px;
+      color: var(--hulu-green);
+      min-width: 30px;
+      text-align: center;
+    }
+
+    .logo-text {
+      background: linear-gradient(90deg, var(--hulu-green), #8affc1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
+    }
+
+    aside:hover .logo-text {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    nav li {
+      color: var(--hulu-gray);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 12px 15px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-left: 3px solid transparent;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+
+    nav a {
+      color: inherit;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+    }
+
+    nav li:hover {
+      color: var(--hulu-white);
+      background: rgba(28, 231, 131, 0.05);
+    }
+
+    nav li.active {
+      color: var(--hulu-green);
+      background: rgba(28, 231, 131, 0.08);
+      border-left: 3px solid var(--hulu-green);
+      font-weight: 600;
+    }
+
+    .nav-text {
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
+    }
+
+    aside:hover .nav-text {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .live-badge {
+      background: var(--live-red);
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 3px;
+      margin-left: auto;
+      display: none;
+    }
+
+    aside:hover .live-badge {
+      display: inline-block;
+    }
+
+    /* MAIN CONTENT */
+    main {
+      flex: 1;
+      padding-left: 70px;
+      width: 100%;
+      transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    aside:hover ~ main {
+      padding-left: 220px;
+    }
+
+    /* HEADER */
+    .main-header {
+      background: rgba(11, 15, 20, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 15px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      border-bottom: 1px solid rgba(28, 231, 131, 0.1);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .menu-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--hulu-white);
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .menu-toggle:hover {
+      background: rgba(28, 231, 131, 0.1);
+      border-color: var(--hulu-green);
+    }
+
+    .page-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--live-red);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 20px;
+    }
+
+    .live-indicator .pulse {
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    /* PLAYER SECTION - CORRIGIDO */
+    .player-section {
+      padding: 25px;
+      background: var(--hulu-darker);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .player-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      position: relative;
+      background: #000;
+    }
+
+    .player-header {
+      background: rgba(0, 0, 0, 0.8);
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .channel-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .channel-logo {
+      height: 40px;
+      width: auto;
+      max-width: 150px;
+      object-fit: contain;
+    }
+
+    .channel-name {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .current-program {
+      font-size: 14px;
+      color: var(--hulu-gray-light);
+    }
+
+    .player-controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    .player-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: white;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .player-btn:hover {
+      background: rgba(28, 231, 131, 0.2);
+      color: var(--hulu-green);
+    }
+
+    /* VIDEO CONTAINER CORRIGIDO */
+    .video-container {
+      position: relative;
+      width: 100%;
+      background: #000;
+    }
+
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+    }
+
+    .live-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #000;
+    }
+
+    .video-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 70%, rgba(0,0,0,0.5) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 1;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .video-overlay.hidden {
+      opacity: 0;
+    }
+
+    .video-placeholder {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      background: linear-gradient(45deg, #0b0f14, #16202f);
+      z-index: 2;
+    }
+
+    .video-placeholder i {
+      font-size: 80px;
+      color: var(--hulu-green);
+      margin-bottom: 20px;
+    }
+
+    .video-placeholder h3 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .video-placeholder p {
+      color: var(--hulu-gray);
+      max-width: 500px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .select-channel-msg {
+      background: rgba(28, 231, 131, 0.1);
+      border: 1px solid var(--hulu-green);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-top: 20px;
+    }
+
+    /* Video Controls */
+    .video-controls {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: linear-gradient(transparent, rgba(0,0,0,0.8));
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 3;
+    }
+
+    .video-container:hover .video-controls {
+      opacity: 1;
+    }
+
+    .controls-left, .controls-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .play-pause-btn {
+      background: var(--hulu-green);
+      color: var(--hulu-black);
+      border: none;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+
+    .play-pause-btn:hover {
+      transform: scale(1.1);
+      background: var(--hulu-green-hover);
+    }
+
+    .volume-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .volume-slider {
+      width: 80px;
+      height: 4px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 2px;
+      appearance: none;
+      outline: none;
+    }
+
+    .volume-slider::-webkit-slider-thumb {
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--hulu-green);
+      cursor: pointer;
+    }
+
+    .time-display {
+      font-size: 14px;
+      color: var(--hulu-white);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .live-badge-large {
+      background: var(--live-red);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Progress Bar */
+    .progress-container {
+      position: absolute;
+      bottom: 70px;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.2);
+      cursor: pointer;
+      z-index: 3;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: var(--hulu-green);
+      width: 0%;
+      transition: width 0.1s;
+    }
+
+    /* Loading Animation */
+    .loading-animation {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      text-align: center;
+      display: none;
+    }
+
+    .loading-animation.active {
+      display: block;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(28, 231, 131, 0.2);
+      border-top: 4px solid var(--hulu-green);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* CHANNELS GRID */
+    .channels-section {
+      padding: 25px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    .section-header h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .time-slider {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .time-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--hulu-white);
+      padding: 8px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 14px;
+    }
+
+    .time-btn.active {
+      background: var(--hulu-green);
+      color: var(--hulu-black);
+      border-color: var(--hulu-green);
+    }
+
+    .time-btn:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .current-time {
+      font-weight: 600;
+      color: var(--hulu-green);
+    }
+
+    /* CHANNELS LIST */
+    .channels-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .channel-row {
+      display: flex;
+      background: var(--hulu-dark);
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .channel-row:hover {
+      background: rgba(28, 231, 131, 0.05);
+    }
+
+    .channel-row.active {
+      background: var(--channel-active);
+      border-left: 4px solid var(--hulu-green);
+    }
+
+    .channel-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px 20px;
+      min-width: 250px;
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .channel-logo-small {
+      height: 30px;
+      width: auto;
+      max-width: 120px;
+      object-fit: contain;
+    }
+
+    .channel-name-small {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .channel-category {
+      font-size: 12px;
+      color: var(--hulu-gray);
+      margin-top: 3px;
+    }
+
+    .live-tag {
+      background: var(--live-red);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 3px;
+      margin-left: auto;
+    }
+
+    /* PROGRAM GUIDE */
+    .program-guide {
+      flex: 1;
+      overflow-x: auto;
+      padding: 15px 0;
+    }
+
+    .time-slots {
+      display: flex;
+      padding: 0 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      margin-bottom: 15px;
+    }
+
+    .time-slot {
+      min-width: 120px;
+      text-align: center;
+      padding: 10px 0;
+      font-size: 13px;
+      color: var(--hulu-gray);
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .time-slot.current {
+      color: var(--hulu-green);
+      font-weight: 600;
+    }
+
+    .program-slots {
+      display: flex;
+      padding: 0 20px;
+    }
+
+    .program-slot {
+      min-width: 120px;
+      padding: 10px;
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      height: 70px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .program-slot.current {
+      background: rgba(28, 231, 131, 0.1);
+      border-radius: 6px;
+    }
+
+    .program-title {
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+
+    .program-time {
+      font-size: 11px;
+      color: var(--hulu-gray);
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--hulu-darker);
+      padding: 40px 25px 20px;
+      border-top: 1px solid rgba(28, 231, 131, 0.1);
+      margin-top: 40px;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
+      margin-bottom: 30px;
+    }
+
+    .footer-logo {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--hulu-green);
+      margin-bottom: 15px;
+    }
+
+    .footer-links h4 {
+      font-size: 16px;
+      margin-bottom: 15px;
+      color: var(--hulu-white);
+    }
+
+    .footer-links ul {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 8px;
+    }
+
+    .footer-links a {
+      color: var(--hulu-gray);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover {
+      color: var(--hulu-green);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--hulu-gray);
+      font-size: 13px;
+    }
+
+    /* RESPONSIVIDADE */
+    @media (max-width: 1200px) {
+      .channel-item {
+        min-width: 200px;
+      }
+      
+      .time-slot, .program-slot {
+        min-width: 100px;
+      }
+    }
+
+    @media (max-width: 992px) {
+      aside {
+        transform: translateX(-100%);
+        width: 250px;
+      }
+      
+      aside.active {
+        transform: translateX(0);
+      }
+      
+      aside:hover {
+        width: 250px;
+      }
+      
+      main {
+        padding-left: 0;
+      }
+      
+      .header-left {
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      .live-indicator {
+        display: none;
+      }
+      
+      .channel-row {
+        flex-direction: column;
+      }
+      
+      .channel-item {
+        min-width: 100%;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      
+      .program-guide {
+        padding: 15px;
+      }
+      
+      .video-controls {
+        opacity: 1;
+        padding: 10px 15px;
+      }
+      
+      .play-pause-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .player-section, .channels-section {
+        padding: 15px;
+      }
+      
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+      
+      .time-slider {
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      .video-placeholder h3 {
+        font-size: 20px;
+      }
+      
+      .video-placeholder i {
+        font-size: 60px;
+      }
+      
+      .player-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+      }
+      
+      .channel-info {
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      .player-controls {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .controls-left, .controls-right {
+        gap: 10px;
+      }
+      
+      .volume-slider {
+        width: 60px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .page-title {
+        font-size: 20px;
+      }
+      
+      .time-btn {
+        padding: 6px 10px;
+        font-size: 13px;
+      }
+      
+      .time-slot, .program-slot {
+        min-width: 80px;
+      }
+      
+      .program-title {
+        font-size: 12px;
+      }
+      
+      .video-controls {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+      }
+      
+      .controls-left, .controls-right {
+        justify-content: center;
+        width: 100%;
+      }
+    }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--hulu-dark);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--hulu-green);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--hulu-green-hover);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside id="sidebar">
+      <div class="logo-container">
+        <a href="index.html" class="logo">
+          <i class="fas fa-play-circle"></i>
+          <span class="logo-text">Alba+</span>
+        </a>
+      </div>
+      
+      <nav>
+        <ul>
+          <li>
+            <a href="index.html">
+              <i class="fas fa-home"></i>
+              <span class="nav-text">Início</span>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <i class="fas fa-film"></i>
+              <span class="nav-text">Filmes</span>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <i class="fas fa-basketball-ball"></i>
+              <span class="nav-text">Esportes</span>
+            </a>
+          </li>
+          <li class="active">
+            <a href="live.html">
+              <i class="fas fa-broadcast-tower"></i>
+              <span class="nav-text">Ao Vivo</span>
+              <span class="live-badge">LIVE</span>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <i class="fas fa-bookmark"></i>
+              <span class="nav-text">Minha Lista</span>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <i class="fas fa-cog"></i>
+              <span class="nav-text">Configurações</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main>
+      <!-- HEADER -->
+      <div class="main-header">
+        <div class="header-left">
+          <div class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+          </div>
+          <h1 class="page-title">Live Agora</h1>
+          <div class="live-indicator">
+            <div class="pulse"></div>
+            <span>TRANSMITINDO AO VIVO</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLAYER SECTION - CORRIGIDO -->
+      <div class="player-section">
+        <div class="player-container">
+          <div class="player-header">
+            <div class="channel-info">
+              <img id="currentChannelLogo" class="channel-logo" src="https://www.nicepng.com/png/full/315-3159442_our-customers-logo-da-globo-png.png" alt="Canal">
+              <div>
+                <div id="currentChannelName" class="channel-name">Globo</div>
+                <div id="currentProgram" class="current-program">Selecione um canal para assistir</div>
+              </div>
+            </div>
+            <div class="player-controls">
+              <button class="player-btn" id="fullscreenBtn">
+                <i class="fas fa-expand"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="video-container">
+            <div class="video-wrapper">
+              <!-- Video Placeholder -->
+              <div class="video-placeholder" id="videoPlaceholder">
+                <i class="fas fa-tv"></i>
+                <h3>Selecione um canal para assistir</h3>
+                <p>Escolha um canal na grade de programação abaixo para começar a transmissão ao vivo.</p>
+                <div class="select-channel-msg">
+                  <i class="fas fa-arrow-down"></i> Role para baixo e selecione um canal
+                </div>
+              </div>
+              
+              <!-- Video Element -->
+              <video class="live-video" id="liveVideo" preload="metadata" playsinline>
+                <source id="videoSource" type="video/mp4">
+                Seu navegador não suporta a tag de vídeo.
+              </video>
+              
+              <!-- Video Overlay -->
+              <div class="video-overlay" id="videoOverlay"></div>
+              
+              <!-- Loading Animation -->
+              <div class="loading-animation" id="loadingAnimation">
+                <div class="spinner"></div>
+                <p>Carregando transmissão...</p>
+              </div>
+              
+              <!-- Progress Bar -->
+              <div class="progress-container" id="progressContainer">
+                <div class="progress-bar" id="progressBar"></div>
+              </div>
+              
+              <!-- Video Controls -->
+              <div class="video-controls" id="videoControls">
+                <div class="controls-left">
+                  <button class="play-pause-btn" id="playPauseBtn">
+                    <i class="fas fa-play" id="playIcon"></i>
+                  </button>
+                  <div class="volume-control">
+                    <button class="player-btn" id="volumeBtn">
+                      <i class="fas fa-volume-up" id="volumeIcon"></i>
+                    </button>
+                    <input type="range" min="0" max="100" value="100" class="volume-slider" id="volumeSlider">
+                  </div>
+                  <div class="time-display" id="timeDisplay">00:00 / LIVE</div>
+                </div>
+                <div class="controls-right">
+                  <div class="live-badge-large">
+                    <i class="fas fa-circle"></i>
+                    <span>AO VIVO</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHANNELS SECTION -->
+      <div class="channels-section">
+        <div class="section-header">
+          <h2>Grade de Programação</h2>
+          <div class="time-slider">
+            <button class="time-btn active" data-time="now" id="timeNow">Agora</button>
+            <button class="time-btn" data-time="next" id="timeNext">Próximos 30 min</button>
+            <button class="time-btn" data-time="later" id="timeLater">Mais tarde</button>
+            <span class="current-time" id="currentTimeDisplay">20:30</span>
+          </div>
+        </div>
+        
+        <div class="channels-list">
+          <!-- CANAL 1: GLOBO -->
+          <div class="channel-row active" data-channel="globo">
+            <div class="channel-item">
+              <img class="channel-logo-small" src="https://www.nicepng.com/png/full/315-3159442_our-customers-logo-da-globo-png.png" alt="Globo">
+              <div>
+                <div class="channel-name-small">Globo</div>
+                <div class="channel-category">Entretenimento • Jornalismo</div>
+              </div>
+              <span class="live-tag">LIVE</span>
+            </div>
+            
+            <div class="program-guide">
+              <div class="time-slots" id="timeSlots">
+                <!-- Slots de tempo serão preenchidos via JavaScript -->
+              </div>
+              <div class="program-slots" id="globoPrograms">
+                <!-- Programas serão preenchidos via JavaScript -->
+              </div>
+            </div>
+          </div>
+          
+          <!-- CANAL 2: GLOBO NEWS -->
+          <div class="channel-row" data-channel="globo-news">
+            <div class="channel-item">
+              <img class="channel-logo-small" src="https://upload.wikimedia.org/wikipedia/commons/8/89/Logotipo_da_GloboNews.png" alt="Globo News">
+              <div>
+                <div class="channel-name-small">Globo News</div>
+                <div class="channel-category">Jornalismo 24h</div>
+              </div>
+              <span class="live-tag">LIVE</span>
+            </div>
+            
+            <div class="program-guide">
+              <div class="time-slots">
+                <!-- Mesmos slots de tempo -->
+              </div>
+              <div class="program-slots" id="globoNewsPrograms">
+                <!-- Programas serão preenchidos via JavaScript -->
+              </div>
+            </div>
+          </div>
+          
+          <!-- CANAL 3: MTV -->
+          <div class="channel-row" data-channel="mtv">
+            <div class="channel-item">
+              <img class="channel-logo-small" src="https://upload.wikimedia.org/wikipedia/commons/6/68/MTV_2021_%28brand_version%29.svg" alt="MTV">
+              <div>
+                <div class="channel-name-small">MTV</div>
+                <div class="channel-category">Música • Entretenimento</div>
+              </div>
+              <span class="live-tag">LIVE</span>
+            </div>
+            
+            <div class="program-guide">
+              <div class="time-slots">
+                <!-- Mesmos slots de tempo -->
+              </div>
+              <div class="program-slots" id="mtvPrograms">
+                <!-- Programas serão preenchidos via JavaScript -->
+              </div>
+            </div>
+          </div>
+          
+          <!-- CANAL 4: BIS -->
+          <div class="channel-row" data-channel="bis">
+            <div class="channel-item">
+              <img class="channel-logo-small" src="https://static.wikia.nocookie.net/logopedia/images/9/9b/BIS_BR.svg/revision/latest/scale-to-width-down/200?cb=20220718153251" alt="BIS">
+              <div>
+                <div class="channel-name-small">BIS</div>
+                <div class="channel-category">Música • Cultura</div>
+              </div>
+              <span class="live-tag">LIVE</span>
+            </div>
+            
+            <div class="program-guide">
+              <div class="time-slots">
+                <!-- Mesmos slots de tempo -->
+              </div>
+              <div class="program-slots" id="bisPrograms">
+                <!-- Programas serão preenchidos via JavaScript -->
+              </div>
+            </div>
+          </div>
+          
+          <!-- CANAL 5: SPORTV -->
+          <div class="channel-row" data-channel="sportv">
+            <div class="channel-item">
+              <img class="channel-logo-small" src="https://upload.wikimedia.org/wikipedia/commons/2/26/SporTV_2021.png" alt="SporTV">
+              <div>
+                <div class="channel-name-small">SporTV</div>
+                <div class="channel-category">Esportes</div>
+              </div>
+              <span class="live-tag">LIVE</span>
+            </div>
+            
+            <div class="program-guide">
+              <div class="time-slots">
+                <!-- Mesmos slots de tempo -->
+              </div>
+              <div class="program-slots" id="sportvPrograms">
+                <!-- Programas serão preenchidos via JavaScript -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- FOOTER -->
+      <footer>
+        <div class="footer-content">
+          <div>
+            <div class="footer-logo">Alba+</div>
+            <p style="color: var(--hulu-gray); margin-bottom: 20px; max-width: 300px;">O melhor conteúdo em streaming, sempre ao seu alcance. Assista onde e quando quiser.</p>
+          </div>
+          
+          <div class="footer-links">
+            <h4>Navegação</h4>
+            <ul>
+              <li><a href="index.html">Início</a></li>
+              <li><a href="#">Filmes</a></li>
+              <li><a href="#">Esportes</a></li>
+              <li><a href="live.html">Ao Vivo</a></li>
+              <li><a href="#">Minha Lista</a></li>
+            </ul>
+          </div>
+          
+          <div class="footer-links">
+            <h4>Canais</h4>
+            <ul>
+              <li><a href="#" data-channel="globo">Globo</a></li>
+              <li><a href="#" data-channel="globo-news">Globo News</a></li>
+              <li><a href="#" data-channel="mtv">MTV</a></li>
+              <li><a href="#" data-channel="bis">BIS</a></li>
+              <li><a href="#" data-channel="sportv">SporTV</a></li>
+            </ul>
+          </div>
+          
+          <div class="footer-links">
+            <h4>Ajuda</h4>
+            <ul>
+              <li><a href="#">Suporte</a></li>
+              <li><a href="#">FAQ</a></li>
+              <li><a href="#">Contato</a></li>
+              <li><a href="#">Termos de Uso</a></li>
+              <li><a href="#">Privacidade</a></li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="footer-bottom">
+          <p>&copy; 2023 Alba+ Streaming. Todos os direitos reservados.</p>
+          <p style="margin-top: 10px; font-size: 12px;">Esta é uma página demonstrativa. Os conteúdos exibidos são fictícios.</p>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    // Dados dos canais
+    const channels = {
+      'globo': {
+        name: 'Globo',
+        logo: 'https://www.nicepng.com/png/full/315-3159442_our-customers-logo-da-globo-png.png',
+        category: 'Entretenimento • Jornalismo',
+        videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-group-of-friends-partying-happily-4640-large.mp4',
+        programs: [
+          { time: '20:00', title: 'Jornal Nacional', duration: 30 },
+          { time: '20:30', title: 'Novela: Terra e Paixão', duration: 60 },
+          { time: '21:30', title: 'Fantástico', duration: 90 },
+          { time: '23:00', title: 'Corujão', duration: 60 }
+        ]
+      },
+      'globo-news': {
+        name: 'Globo News',
+        logo: 'https://upload.wikimedia.org/wikipedia/commons/8/89/Logotipo_da_GloboNews.png',
+        category: 'Jornalismo 24h',
+        videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-breaking-news-announcement-432-large.mp4',
+        programs: [
+          { time: '20:00', title: 'Edição das 20h', duration: 60 },
+          { time: '21:00', title: 'Painel', duration: 30 },
+          { time: '21:30', title: 'Em Pauta', duration: 30 },
+          { time: '22:00', title: 'Globo News Esporte', duration: 30 }
+        ]
+      },
+      'mtv': {
+        name: 'MTV',
+        logo: 'https://upload.wikimedia.org/wikipedia/commons/6/68/MTV_2021_%28brand_version%29.svg',
+        category: 'Música • Entretenimento',
+        videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-woman-listening-to-music-and-relaxing-at-home-4322-large.mp4',
+        programs: [
+          { time: '20:00', title: 'Top 20 MTV', duration: 60 },
+          { time: '21:00', title: 'MTV Hits', duration: 60 },
+          { time: '22:00', title: 'MTV Live', duration: 60 },
+          { time: '23:00', title: 'MTV Classics', duration: 60 }
+        ]
+      },
+      'bis': {
+        name: 'BIS',
+        logo: 'https://static.wikia.nocookie.net/logopedia/images/9/9b/BIS_BR.svg/revision/latest/scale-to-width-down/200?cb=20220718153251',
+        category: 'Música • Cultura',
+        videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-people-dancing-in-a-party-4645-large.mp4',
+        programs: [
+          { time: '20:00', title: 'BIS Sessions', duration: 60 },
+          { time: '21:00', title: 'BIS Apresenta', duration: 60 },
+          { time: '22:00', title: 'BIS TV', duration: 60 },
+          { time: '23:00', title: 'BIS Clássicos', duration: 60 }
+        ]
+      },
+      'sportv': {
+        name: 'SporTV',
+        logo: 'https://upload.wikimedia.org/wikipedia/commons/2/26/SporTV_2021.png',
+        category: 'Esportes',
+        videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-athlete-training-on-a-running-track-4327-large.mp4',
+        programs: [
+          { time: '20:00', title: 'Jogo: Brasil x Argentina', duration: 120 },
+          { time: '22:00', title: 'Esporte Espetacular', duration: 60 },
+          { time: '23:00', title: 'Linha de Passe', duration: 60 },
+          { time: '00:00', title: 'SportsCenter', duration: 60 }
+        ]
+      }
+    };
+
+    // Estado atual
+    let currentChannel = 'globo';
+    let currentTimeView = 'now';
+    let currentTime = '20:30';
+    let isPlaying = false;
+    let isMuted = false;
+    let volume = 100;
+    let videoElement, progressBar, timeDisplay, playPauseBtn, volumeBtn, volumeSlider;
+
+    // Inicializar a página
+    document.addEventListener('DOMContentLoaded', function() {
+      // Elementos do player
+      videoElement = document.getElementById('liveVideo');
+      progressBar = document.getElementById('progressBar');
+      timeDisplay = document.getElementById('timeDisplay');
+      playPauseBtn = document.getElementById('playPauseBtn');
+      volumeBtn = document.getElementById('volumeBtn');
+      volumeSlider = document.getElementById('volumeSlider');
+      
+      // Menu toggle
+      document.getElementById('menuToggle').addEventListener('click', function() {
+        document.getElementById('sidebar').classList.toggle('active');
+      });
+
+      // Gerar grade de horários
+      generateTimeSlots();
+      
+      // Gerar programação para cada canal
+      generateChannelPrograms();
+      
+      // Atualizar player com canal padrão
+      selectChannel('globo');
+      
+      // Configurar botões de tempo
+      setupTimeButtons();
+      
+      // Configurar cliques nos canais
+      setupChannelClicks();
+      
+      // Configurar cliques nos programas
+      setupProgramClicks();
+      
+      // Configurar botões de controle do player
+      setupPlayerControls();
+      
+      // Configurar links do footer
+      setupFooterLinks();
+      
+      // Inicializar volume
+      volumeSlider.value = volume;
+    });
+
+    // Gerar slots de tempo
+    function generateTimeSlots() {
+      const timeSlotsContainer = document.getElementById('timeSlots');
+      timeSlotsContainer.innerHTML = '';
+      
+      const startHour = 20; // 20:00
+      const endHour = 24; // 00:00
+      
+      for (let hour = startHour; hour <= endHour; hour++) {
+        const time = `${hour.toString().padStart(2, '0')}:00`;
+        const timeSlot = document.createElement('div');
+        timeSlot.className = `time-slot ${time === '20:30' ? 'current' : ''}`;
+        timeSlot.textContent = time;
+        timeSlotsContainer.appendChild(timeSlot);
+        
+        // Adicionar slot de meia hora se não for a última hora
+        if (hour < endHour) {
+          const timeHalf = `${hour.toString().padStart(2, '0')}:30`;
+          const timeSlotHalf = document.createElement('div');
+          timeSlotHalf.className = `time-slot ${timeHalf === '20:30' ? 'current' : ''}`;
+          timeSlotHalf.textContent = timeHalf;
+          timeSlotsContainer.appendChild(timeSlotHalf);
+        }
+      }
+      
+      // Atualizar display de tempo atual
+      document.getElementById('currentTimeDisplay').textContent = currentTime;
+    }
+
+    // Gerar programação para cada canal
+    function generateChannelPrograms() {
+      Object.keys(channels).forEach(channelId => {
+        const programsContainer = document.getElementById(`${channelId.replace('-', '')}Programs`);
+        if (!programsContainer) return;
+        
+        programsContainer.innerHTML = '';
+        const channel = channels[channelId];
+        
+        // Gerar slots vazios até o primeiro programa
+        const firstProgramTime = channel.programs[0].time;
+        const [firstHour, firstMinute] = firstProgramTime.split(':').map(Number);
+        const startHour = 20;
+        
+        // Calcular minutos desde o início
+        const startMinutes = startHour * 60;
+        const firstProgramMinutes = firstHour * 60 + firstMinute;
+        const slotsBeforeFirst = (firstProgramMinutes - startMinutes) / 30;
+        
+        // Adicionar slots vazios antes do primeiro programa
+        for (let i = 0; i < slotsBeforeFirst; i++) {
+          const emptySlot = document.createElement('div');
+          emptySlot.className = 'program-slot';
+          emptySlot.innerHTML = '<div class="program-title">-</div>';
+          programsContainer.appendChild(emptySlot);
+        }
+        
+        // Adicionar programas
+        let currentSlot = slotsBeforeFirst;
+        channel.programs.forEach((program, index) => {
+          const [hour, minute] = program.time.split(':').map(Number);
+          const programMinutes = hour * 60 + minute;
+          const durationSlots = program.duration / 30;
+          
+          // Para cada slot que o programa ocupa
+          for (let i = 0; i < durationSlots; i++) {
+            const programSlot = document.createElement('div');
+            programSlot.className = `program-slot ${program.time === '20:30' ? 'current' : ''}`;
+            programSlot.dataset.channel = channelId;
+            programSlot.dataset.programIndex = index;
+            
+            // Só mostrar título no primeiro slot do programa
+            if (i === 0) {
+              programSlot.innerHTML = `
+                <div class="program-title">${program.title}</div>
+                <div class="program-time">${program.time}</div>
+              `;
+            } else {
+              programSlot.innerHTML = '<div class="program-title">-</div>';
+            }
+            
+            programsContainer.appendChild(programSlot);
+            currentSlot++;
+          }
+        });
+        
+        // Adicionar slots vazios até o final (24:00)
+        const totalSlots = 8; // Das 20:00 às 00:00 (8 slots de 30 min)
+        for (let i = currentSlot; i < totalSlots; i++) {
+          const emptySlot = document.createElement('div');
+          emptySlot.className = 'program-slot';
+          emptySlot.innerHTML = '<div class="program-title">-</div>';
+          programsContainer.appendChild(emptySlot);
+        }
+      });
+    }
+
+    // Configurar botões de tempo
+    function setupTimeButtons() {
+      const timeButtons = document.querySelectorAll('.time-btn');
+      timeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          // Remover classe active de todos os botões
+          timeButtons.forEach(btn => btn.classList.remove('active'));
+          
+          // Adicionar classe active ao botão clicado
+          this.classList.add('active');
+          
+          // Atualizar visualização de tempo
+          currentTimeView = this.dataset.time;
+          
+          // Atualizar display de tempo
+          if (currentTimeView === 'now') {
+            currentTime = '20:30';
+          } else if (currentTimeView === 'next') {
+            currentTime = '21:00';
+          } else {
+            currentTime = '22:30';
+          }
+          
+          document.getElementById('currentTimeDisplay').textContent = currentTime;
+          
+          // Atualizar grade para mostrar o tempo atual
+          updateTimeSlots();
+        });
+      });
+    }
+
+    // Atualizar slots de tempo
+    function updateTimeSlots() {
+      const timeSlots = document.querySelectorAll('.time-slot');
+      timeSlots.forEach(slot => {
+        slot.classList.remove('current');
+        if (slot.textContent === currentTime) {
+          slot.classList.add('current');
+        }
+      });
+    }
+
+    // Configurar cliques nos canais
+    function setupChannelClicks() {
+      const channelRows = document.querySelectorAll('.channel-row');
+      channelRows.forEach(row => {
+        row.addEventListener('click', function(e) {
+          // Não fazer nada se clicou em um programa específico
+          if (e.target.closest('.program-slot')) return;
+          
+          const channelId = this.dataset.channel;
+          selectChannel(channelId);
+        });
+      });
+    }
+
+    // Configurar cliques nos programas
+    function setupProgramClicks() {
+      document.addEventListener('click', function(e) {
+        const programSlot = e.target.closest('.program-slot');
+        if (programSlot && programSlot.dataset.channel) {
+          const channelId = programSlot.dataset.channel;
+          const programIndex = programSlot.dataset.programIndex;
+          
+          selectChannel(channelId);
+          
+          // Mostrar informações do programa selecionado
+          if (programIndex !== undefined) {
+            const channel = channels[channelId];
+            const program = channel.programs[programIndex];
+            
+            document.getElementById('currentProgram').textContent = 
+              `${program.title} • ${program.time} (${program.duration} min)`;
+          }
+        }
+      });
+    }
+
+    // Selecionar canal
+    function selectChannel(channelId) {
+      // Remover classe active de todos os canais
+      document.querySelectorAll('.channel-row').forEach(row => {
+        row.classList.remove('active');
+      });
+      
+      // Adicionar classe active ao canal selecionado
+      document.querySelector(`.channel-row[data-channel="${channelId}"]`).classList.add('active');
+      
+      // Atualizar player
+      loadChannel(channelId);
+      
+      // Atualizar canal atual
+      currentChannel = channelId;
+    }
+
+    // Carregar canal no player
+    function loadChannel(channelId) {
+      const channel = channels[channelId];
+      
+      // Mostrar animação de carregamento
+      document.getElementById('loadingAnimation').classList.add('active');
+      document.getElementById('videoPlaceholder').style.display = 'none';
+      document.getElementById('videoOverlay').classList.remove('hidden');
+      
+      // Atualizar informações do canal
+      document.getElementById('currentChannelLogo').src = channel.logo;
+      document.getElementById('currentChannelName').textContent = channel.name;
+      
+      // Encontrar programa atual
+      const currentProgram = channel.programs.find(program => program.time === '20:30') || 
+                            channel.programs[0];
+      
+      if (currentProgram) {
+        document.getElementById('currentProgram').textContent = 
+          `${currentProgram.title} • ${currentProgram.time}`;
+      }
+      
+      // Carregar vídeo
+      const videoSource = document.getElementById('videoSource');
+      videoSource.src = channel.videoUrl;
+      
+      // Recarregar o vídeo
+      videoElement.load();
+      
+      // Quando o vídeo estiver pronto para tocar
+      videoElement.addEventListener('loadeddata', function() {
+        document.getElementById('loadingAnimation').classList.remove('active');
+        
+        // Iniciar reprodução
+        videoElement.play().then(() => {
+          isPlaying = true;
+          updatePlayPauseButton();
+        }).catch(err => {
+          console.log('Reprodução automática bloqueada:', err);
+          isPlaying = false;
+          updatePlayPauseButton();
+        });
+      }, { once: true });
+      
+      // Atualizar progresso do vídeo
+      videoElement.addEventListener('timeupdate', updateProgressBar);
+      
+      // Atualizar tempo decorrido
+      videoElement.addEventListener('timeupdate', updateTimeDisplay);
+      
+      // Lidar com erros de vídeo
+      videoElement.addEventListener('error', function() {
+        document.getElementById('loadingAnimation').classList.remove('active');
+        console.error('Erro ao carregar o vídeo');
+      });
+    }
+
+    // Configurar controles do player
+    function setupPlayerControls() {
+      // Botão play/pause
+      playPauseBtn.addEventListener('click', togglePlayPause);
+      
+      // Botão de volume
+      volumeBtn.addEventListener('click', toggleMute);
+      
+      // Controle de volume
+      volumeSlider.addEventListener('input', function() {
+        volume = this.value;
+        videoElement.volume = volume / 100;
+        
+        // Atualizar ícone do volume
+        updateVolumeIcon();
+      });
+      
+      // Barra de progresso
+      const progressContainer = document.getElementById('progressContainer');
+      progressContainer.addEventListener('click', function(e) {
+        const rect = this.getBoundingClientRect();
+        const pos = (e.clientX - rect.left) / rect.width;
+        videoElement.currentTime = pos * videoElement.duration;
+        updateProgressBar();
+      });
+      
+      // Botão tela cheia
+      document.getElementById('fullscreenBtn').addEventListener('click', function() {
+        const playerContainer = document.querySelector('.player-container');
+        if (!document.fullscreenElement) {
+          if (playerContainer.requestFullscreen) {
+            playerContainer.requestFullscreen();
+          }
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          }
+        }
+      });
+      
+      // Controles de teclado
+      document.addEventListener('keydown', function(e) {
+        // Espaço para play/pause
+        if (e.code === 'Space' && !e.target.matches('input, textarea')) {
+          e.preventDefault();
+          togglePlayPause();
+        }
+        
+        // Setas para volume
+        if (e.code === 'ArrowUp' && !e.target.matches('input, textarea')) {
+          e.preventDefault();
+          volume = Math.min(100, volume + 10);
+          videoElement.volume = volume / 100;
+          volumeSlider.value = volume;
+          updateVolumeIcon();
+        }
+        
+        if (e.code === 'ArrowDown' && !e.target.matches('input, textarea')) {
+          e.preventDefault();
+          volume = Math.max(0, volume - 10);
+          videoElement.volume = volume / 100;
+          volumeSlider.value = volume;
+          updateVolumeIcon();
+        }
+      });
+    }
+
+    // Alternar play/pause
+    function togglePlayPause() {
+      if (isPlaying) {
+        videoElement.pause();
+      } else {
+        videoElement.play();
+      }
+      isPlaying = !isPlaying;
+      updatePlayPauseButton();
+    }
+
+    // Atualizar botão play/pause
+    function updatePlayPauseButton() {
+      const playIcon = document.getElementById('playIcon');
+      if (isPlaying) {
+        playIcon.classList.remove('fa-play');
+        playIcon.classList.add('fa-pause');
+      } else {
+        playIcon.classList.remove('fa-pause');
+        playIcon.classList.add('fa-play');
+      }
+    }
+
+    // Alternar mudo
+    function toggleMute() {
+      isMuted = !isMuted;
+      videoElement.muted = isMuted;
+      updateVolumeIcon();
+    }
+
+    // Atualizar ícone do volume
+    function updateVolumeIcon() {
+      const volumeIcon = document.getElementById('volumeIcon');
+      
+      if (isMuted || volume === 0) {
+        volumeIcon.classList.remove('fa-volume-up', 'fa-volume-down');
+        volumeIcon.classList.add('fa-volume-mute');
+      } else if (volume > 50) {
+        volumeIcon.classList.remove('fa-volume-mute', 'fa-volume-down');
+        volumeIcon.classList.add('fa-volume-up');
+      } else {
+        volumeIcon.classList.remove('fa-volume-mute', 'fa-volume-up');
+        volumeIcon.classList.add('fa-volume-down');
+      }
+    }
+
+    // Atualizar barra de progresso
+    function updateProgressBar() {
+      if (videoElement.duration) {
+        const progress = (videoElement.currentTime / videoElement.duration) * 100;
+        progressBar.style.width = `${progress}%`;
+      }
+    }
+
+    // Atualizar display de tempo
+    function updateTimeDisplay() {
+      const currentTime = formatTime(videoElement.currentTime);
+      timeDisplay.textContent = `${currentTime} / LIVE`;
+    }
+
+    // Formatar tempo (segundos para MM:SS)
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // Configurar links do footer
+    function setupFooterLinks() {
+      // Links de canais no footer
+      document.querySelectorAll('.footer-links a[data-channel]').forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          const channelId = this.dataset.channel;
+          selectChannel(channelId);
+          
+          // Rolar para o player
+          document.querySelector('.player-section').scrollIntoView({ behavior: 'smooth' });
+        });
+      });
+    }
+  </script>
+</body>
+</html>

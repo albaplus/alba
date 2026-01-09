@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Alba+ | Streaming Premium</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      /* Cores inspiradas na Hulu */
+      --hulu-black: #0b0f14;
+      --hulu-dark: #111720;
+      --hulu-darker: #0a0e13;
+      --hulu-green: #1ce783;
+      --hulu-green-hover: #0faf63;
+      --hulu-white: #ffffff;
+      --hulu-gray: #9aa3ad;
+      --hulu-gray-light: #c0c6cf;
+      --hulu-gradient: linear-gradient(90deg, #0b0f14 0%, #16202f 50%, #0b0f14 100%);
+      --card-gradient: linear-gradient(180deg, rgba(11,15,20,0) 0%, rgba(11,15,20,0.7) 50%, rgba(11,15,20,0.95) 100%);
+      --sidebar-width: 70px;
+      --sidebar-expanded-width: 220px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--hulu-black);
+      color: var(--hulu-white);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* SIDEBAR MAIS FINA COM ANIMAÇÃO */
+    aside {
+      width: var(--sidebar-width);
+      background: var(--hulu-darker);
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      position: fixed;
+      height: 100vh;
+      z-index: 100;
+      border-right: 1px solid rgba(28, 231, 131, 0.1);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+    }
+
+    aside:hover {
+      width: var(--sidebar-expanded-width);
+      box-shadow: 5px 0 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .logo-container {
+      padding: 0 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--hulu-green);
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .logo i {
+      font-size: 24px;
+      color: var(--hulu-green);
+      min-width: 30px;
+      text-align: center;
+    }
+
+    .logo-text {
+      background: linear-gradient(90deg, var(--hulu-green), #8affc1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
+    }
+
+    aside:hover .logo-text {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 15px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      margin: 0 10px 20px;
+      padding: 10px;
+    }
+
+    .user-profile:hover {
+      background: rgba(28, 231, 131, 0.05);
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--hulu-green), #0faf63);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      background-size: cover;
+      background-position: center;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .user-info {
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    aside:hover .user-info {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .user-info h4 {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .user-info p {
+      font-size: 11px;
+      color: var(--hulu-gray);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    nav li {
+      color: var(--hulu-gray);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 12px 15px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-left: 3px solid transparent;
+      white-space: nowrap;
+    }
+
+    nav li i {
+      width: 20px;
+      font-size: 18px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    nav li:hover {
+      color: var(--hulu-white);
+      background: rgba(28, 231, 131, 0.05);
+    }
+
+    nav li.active {
+      color: var(--hulu-green);
+      background: rgba(28, 231, 131, 0.08);
+      border-left: 3px solid var(--hulu-green);
+      font-weight: 600;
+    }
+
+    .nav-text {
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
+    }
+
+    aside:hover .nav-text {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .nav-footer {
+      margin-top: auto;
+      padding: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
+    }
+
+    aside:hover .nav-footer {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .upgrade-banner {
+      background: rgba(28, 231, 131, 0.1);
+      border-radius: 6px;
+      padding: 12px;
+      text-align: center;
+      border: 1px solid rgba(28, 231, 131, 0.2);
+    }
+
+    .upgrade-banner h4 {
+      font-size: 12px;
+      margin-bottom: 6px;
+      color: var(--hulu-green);
+    }
+
+    .upgrade-banner p {
+      font-size: 10px;
+      color: var(--hulu-gray-light);
+      margin-bottom: 10px;
+    }
+
+    .upgrade-btn {
+      background: var(--hulu-green);
+      color: var(--hulu-black);
+      border: none;
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .upgrade-btn:hover {
+      background: var(--hulu-green-hover);
+    }
+
+    /* MAIN CONTENT */
+    main {
+      flex: 1;
+      padding-left: var(--sidebar-width);
+      width: 100%;
+      transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    aside:hover ~ main {
+      padding-left: var(--sidebar-expanded-width);
+    }
+
+    /* HEADER FIXO */
+    .main-header {
+      background: rgba(11, 15, 20, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 15px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      border-bottom: 1px solid rgba(28, 231, 131, 0.1);
+    }
+
+    .search-container {
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50px;
+      padding: 10px 18px;
+      width: 400px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .search-container:focus-within {
+      border-color: var(--hulu-green);
+      background: rgba(28, 231, 131, 0.05);
+    }
+
+    .search-container input {
+      background: transparent;
+      border: none;
+      color: var(--hulu-white);
+      font-size: 14px;
+      width: 100%;
+      margin-left: 10px;
+      outline: none;
+    }
+
+    .search-container input::placeholder {
+      color: var(--hulu-gray);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .notification-wrapper {
+      position: relative;
+    }
+
+    .notification-btn {
+      background: none;
+      border: none;
+      color: var(--hulu-gray-light);
+      font-size: 20px;
+      cursor: pointer;
+      transition: color 0.3s;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .notification-btn:hover {
+      color: var(--hulu-green);
+      background: rgba(28, 231, 131, 0.05);
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: var(--hulu-green);
+      color: var(--hulu-black);
+      font-size: 10px;
+      font-weight: 800;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .notification-dropdown {
+      position: absolute;
+      top: 50px;
+      right: 0;
+      width: 320px;
+      background: var(--hulu-darker);
+      border-radius: 10px;
+      border: 1px solid rgba(28, 231, 131, 0.1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(-10px);
+      visibility: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .notification-dropdown.active {
+      opacity: 1;
+      transform: translateY(0);
+      visibility: visible;
+    }
+
+    .notification-header {
+      padding: 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .notification-header h3 {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .mark-all-read {
+      background: none;
+      border: none;
+      color: var(--hulu-green);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .mark-all-read:hover {
+      color: var(--hulu-green-hover);
+    }
+
+    .notification-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .notification-item {
+      padding: 12px 15px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      display: flex;
+      gap: 10px;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .notification-item:hover {
+      background: rgba(28, 231, 131, 0.03);
+    }
+
+    .notification-item.unread {
+      background: rgba(28, 231, 131, 0.05);
+    }
+
+    .notification-icon {
+      color: var(--hulu-green);
+      font-size: 16px;
+      width: 20px;
+      flex-shrink: 0;
+    }
+
+    .notification-content h4 {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .notification-content p {
+      font-size: 12px;
+      color: var(--hulu-gray);
+      margin-bottom: 4px;
+    }
+
+    .notification-time {
+      font-size: 11px;
+      color: var(--hulu-gray);
+    }
+
+    .notification-footer {
+      padding: 10px;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .view-all-notifications {
+      background: none;
+      border: none;
+      color: var(--hulu-green);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .view-all-notifications:hover {
+      color: var(--hulu-green-hover);
+    }
+
+    /* MODAL DE PERFIL */
+    .profile-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+    }
+
+    .profile-modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .profile-modal-content {
+      background: var(--hulu-darker);
+      border-radius: 15px;
+      width: 90%;
+      max-width: 500px;
+      border: 1px solid rgba(28, 231, 131, 0.1);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      transform: translateY(-30px);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .profile-modal.active .profile-modal-content {
+      transform: translateY(0);
+    }
+
+    .profile-modal-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .profile-modal-header h2 {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .close-modal {
+      background: none;
+      border: none;
+      color: var(--hulu-gray);
+      font-size: 22px;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .close-modal:hover {
+      color: var(--hulu-green);
+    }
+
+    .profile-modal-body {
+      padding: 20px;
+    }
+
+    .profile-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--hulu-gray-light);
+    }
+
+    .form-group input {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 12px 15px;
+      color: var(--hulu-white);
+      font-size: 15px;
+      transition: all 0.3s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--hulu-green);
+      background: rgba(28, 231, 131, 0.03);
+    }
+
+    .avatar-preview {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .avatar-large {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--hulu-green), #0faf63);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 28px;
+      background-size: cover;
+      background-position: center;
+      flex-shrink: 0;
+    }
+
+    .avatar-options {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .avatar-option {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .avatar-option:hover {
+      transform: scale(1.1);
+    }
+
+    .avatar-option.active {
+      border-color: var(--hulu-green);
+    }
+
+    .profile-modal-footer {
+      padding: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--hulu-white);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-primary {
+      background: var(--hulu-green);
+      color: var(--hulu-black);
+    }
+
+    .btn-primary:hover {
+      background: var(--hulu-green-hover);
+    }
+
+    /* HERO SECTION */
+    .hero {
+      position: relative;
+      height: 75vh;
+      min-height: 500px;
+      border-radius: 0 0 20px 20px;
+      overflow: hidden;
+      margin-bottom: 40px;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .hero-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.1) 100%),
+      url("https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?auto=format&fit=crop&w=1920&q=80");
+      background-size: cover;
+      background-position: center;
+      z-index: -1;
+    }
+
+    .hero-gradient {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 70%;
+      background: linear-gradient(to top, var(--hulu-black) 10%, transparent 100%);
+      z-index: -1;
+    }
+
+    .hero-content {
+      max-width: 700px;
+      padding: 50px;
+      z-index: 2;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: var(--hulu-green);
+      color: var(--hulu-black);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+    }
+
+    .hero h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 46px;
+      margin-bottom: 16px;
+      line-height: 1.1;
+      text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .hero p {
+      color: var(--hulu-gray-light);
+      font-size: 17px;
+      line-height: 1.5;
+      margin-bottom: 30px;
+      max-width: 600px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .hero-btn-primary {
+      background: var(--hulu-green);
+      color: var(--hulu-black);
+      border: none;
+      padding: 14px 28px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .hero-btn-primary:hover {
+      background: var(--hulu-green-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(28, 231, 131, 0.3);
+    }
+
+    .hero-btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--hulu-white);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 14px 28px;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      backdrop-filter: blur(5px);
+    }
+
+    .hero-btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-3px);
+    }
+
+    .hero-info {
+      display: flex;
+      gap: 20px;
+      color: var(--hulu-gray);
+      font-size: 13px;
+    }
+
+    .hero-info span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* SECTIONS */
+    .content-container {
+      padding: 0 25px 50px;
+    }
+
+    section {
+      margin-bottom: 50px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .section-header h2 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .section-link {
+      color: var(--hulu-green);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .section-link:hover {
+      gap: 10px;
+    }
+
+    /* CARDS ELEGANTES */
+    .row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      height: 300px;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      background: var(--hulu-dark);
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .card:hover {
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--hulu-green);
+      z-index: 10;
+    }
+
+    .card-bg {
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      transition: transform 0.5s ease;
+    }
+
+    .card:hover .card-bg {
+      transform: scale(1.1);
+    }
+
+    .card-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      background: var(--card-gradient);
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .card-title {
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .card-info {
+      display: flex;
+      justify-content: space-between;
+      color: var(--hulu-gray-light);
+      font-size: 12px;
+    }
+
+    /* Cards sem título (para seções sem título) */
+    .card.no-title .card-overlay {
+      display: none;
+    }
+
+    /* RESPONSIVIDADE */
+    @media (max-width: 1200px) {
+      .row {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      }
+    }
+
+    @media (max-width: 992px) {
+      aside {
+        width: 60px;
+      }
+      
+      aside:hover {
+        width: 220px;
+      }
+      
+      .logo-text, .user-info, .nav-text, .upgrade-banner h4, .upgrade-banner p, .nav-footer {
+        display: none;
+      }
+      
+      aside:hover .logo-text,
+      aside:hover .user-info,
+      aside:hover .nav-text,
+      aside:hover .upgrade-banner h4,
+      aside:hover .upgrade-banner p,
+      aside:hover .nav-footer {
+        display: block;
+      }
+      
+      main {
+        padding-left: 60px;
+      }
+      
+      aside:hover ~ main {
+        padding-left: 220px;
+      }
+      
+      .search-container {
+        width: 300px;
+      }
+      
+      .hero h1 {
+        font-size: 38px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      aside {
+        transform: translateX(-100%);
+        width: 250px;
+      }
+      
+      aside.active {
+        transform: translateX(0);
+      }
+      
+      aside:hover {
+        width: 250px;
+      }
+      
+      main {
+        padding-left: 0;
+      }
+      
+      .menu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--hulu-white);
+        font-size: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      
+      .menu-toggle:hover {
+        background: rgba(28, 231, 131, 0.1);
+        border-color: var(--hulu-green);
+      }
+      
+      .main-header {
+        padding: 15px 20px;
+      }
+      
+      .search-container {
+        width: 200px;
+      }
+      
+      .hero {
+        height: 65vh;
+        min-height: 400px;
+      }
+      
+      .hero-content {
+        padding: 30px 25px;
+      }
+      
+      .hero h1 {
+        font-size: 32px;
+      }
+      
+      .hero p {
+        font-size: 15px;
+      }
+      
+      .hero-actions {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .content-container {
+        padding: 0 20px 40px;
+      }
+      
+      .row {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+      
+      .card {
+        height: 220px;
+      }
+      
+      .notification-dropdown {
+        width: 280px;
+        right: -50px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .search-container {
+        width: auto;
+        max-width: 180px;
+      }
+      
+      .hero {
+        height: 55vh;
+        min-height: 350px;
+      }
+      
+      .hero-content {
+        padding: 25px 20px;
+      }
+      
+      .hero h1 {
+        font-size: 28px;
+      }
+      
+      .hero-btn-primary, .hero-btn-secondary {
+        padding: 12px 20px;
+        font-size: 14px;
+      }
+      
+      .row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .card {
+        height: 180px;
+      }
+      
+      .notification-dropdown {
+        width: 250px;
+        right: -80px;
+      }
+    }
+
+    /* ANIMAÇÕES ELEGANTES */
+    @keyframes fadeInUp {
+      from { 
+        opacity: 0; 
+        transform: translateY(30px); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0); 
+      }
+    }
+
+    @keyframes slideInRight {
+      from { 
+        opacity: 0; 
+        transform: translateX(30px); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateX(0); 
+      }
+    }
+
+    .hero {
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    section {
+      animation: slideInRight 0.6s ease-out;
+    }
+
+    section:nth-child(2) { animation-delay: 0.1s; }
+    section:nth-child(3) { animation-delay: 0.2s; }
+    section:nth-child(4) { animation-delay: 0.3s; }
+
+    /* SCROLLBAR PERSONALIZADA */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--hulu-dark);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--hulu-green);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--hulu-green-hover);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside id="sidebar">
+      <div class="logo-container">
+        <div class="logo">
+          <i class="fas fa-play-circle"></i>
+          <span class="logo-text">Alba+</span>
+        </div>
+      </div>
+      
+      <div class="user-profile" id="userProfile">
+        <div class="avatar" id="userAvatar">A</div>
+        <div class="user-info">
+          <h4 id="userName">Alex Silva</h4>
+          <p id="userPlan">Plano Premium</p>
+        </div>
+      </div>
+      
+      <nav>
+        <ul>
+          <li class="active">
+            <i class="fas fa-home"></i>
+            <span class="nav-text">Início</span>
+          </li>
+          <li>
+            <i class="fas fa-film"></i>
+            <span class="nav-text">Filmes</span>
+          </li>
+          <li>
+            <i class="fas fa-basketball-ball"></i>
+            <span class="nav-text">Esportes</span>
+          </li>
+          <li>
+            <i class="fas fa-broadcast-tower"></i>
+            <span class="nav-text">Ao Vivo</span>
+          </li>
+          <li>
+            <i class="fas fa-bookmark"></i>
+            <span class="nav-text">Minha Lista</span>
+          </li>
+          <li>
+            <i class="fas fa-cog"></i>
+            <span class="nav-text">Configurações</span>
+          </li>
+        </ul>
+      </nav>
+      
+      <div class="nav-footer">
+        <div class="upgrade-banner">
+          <h4>Alba+ Premium</h4>
+          <p>Assista sem anúncios e em 4K</p>
+          <button class="upgrade-btn">UPGRADE</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main>
+      <!-- HEADER -->
+      <div class="main-header">
+        <div class="menu-toggle" id="menuToggle">
+          <i class="fas fa-bars"></i>
+        </div>
+        
+        <div class="search-container">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Buscar filmes, séries, esportes...">
+        </div>
+        
+        <div class="header-actions">
+          <div class="notification-wrapper">
+            <button class="notification-btn" id="notificationBtn">
+              <i class="fas fa-bell"></i>
+              <span class="notification-badge" id="notificationCount">3</span>
+            </button>
+            <div class="notification-dropdown" id="notificationDropdown">
+              <div class="notification-header">
+                <h3>Notificações</h3>
+                <button class="mark-all-read" id="markAllRead">Marcar todas como lidas</button>
+              </div>
+              <div class="notification-list" id="notificationList">
+                <!-- Notificações serão geradas via JavaScript -->
+              </div>
+              <div class="notification-footer">
+                <button class="view-all-notifications">Ver todas as notificações</button>
+              </div>
+            </div>
+          </div>
+          <div class="avatar" id="headerAvatar" style="cursor: pointer;">A</div>
+        </div>
+      </div>
+
+      <!-- HERO SECTION -->
+      <div class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-gradient"></div>
+        
+        <div class="hero-content">
+          <span class="hero-badge">NOVO EPISÓDIO</span>
+          <h1>Destaque da Semana</h1>
+          <p>Produção original Alba+. Drama, ambição e belas imagens. Assista agora à nova temporada exclusiva.</p>
+          
+          <div class="hero-actions">
+            <button class="hero-btn-primary">
+              <i class="fas fa-play"></i> Assistir Agora
+            </button>
+            <button class="hero-btn-secondary" id="addToList">
+              <i class="fas fa-plus"></i> Minha Lista
+            </button>
+          </div>
+          
+          <div class="hero-info">
+            <span><i class="fas fa-clock"></i> 2h 15m</span>
+            <span><i class="fas fa-tag"></i> Drama, Suspense</span>
+            <span><i class="fas fa-hd"></i> 4K UHD</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTEÚDO -->
+      <div class="content-container">
+        <!-- SEÇÃO AO VIVO -->
+        <section>
+          <div class="section-header">
+            <h2>Ao Vivo Agora</h2>
+            <a href="#" class="section-link">
+              Ver Todos <i class="fas fa-chevron-right"></i>
+            </a>
+          </div>
+          
+          <div class="row">
+            <div class="card">
+              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1461896836934-ffe607ba8211?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80');"></div>
+              <div class="card-overlay">
+                <div class="card-title">Esportes ao Vivo</div>
+                <div class="card-info">
+                  <span>Futebol</span>
+                  <span>Agora</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card">
+              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1574267432553-4b4628081c31?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80');"></div>
+              <div class="card-overlay">
+                <div class="card-title">Notícias 24h</div>
+                <div class="card-info">
+                  <span>Jornalismo</span>
+                  <span>Agora</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card">
+              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w-800&q=80');"></div>
+              <div class="card-overlay">
+                <div class="card-title">Show Musical</div>
+                <div class="card-info">
+                  <span>Música</span>
+                  <span>Agora</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card">
+              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w-800&q=80');"></div>
+              <div class="card-overlay">
+                <div class="card-title">Documentário</div>
+                <div class="card-info">
+                  <span>Natureza</span>
+                  <span>Agora</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SEÇÃO RECOMENDADOS -->
+        <section>
+          <div class="section-header">
+            <h2>Para Você</h2>
+            <a href="#" class="section-link">
+              Ver Todos <i class="fas fa-chevron-right"></i>
+            </a>
+          </div>
+          
+          <div class="row">
+            <div class="card no-title">
+              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w-800&q=80');"></div>
+            </div>
+            
+            <div class="card no-title">
+              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1489599809516-9827b6d1cf13?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w-800&q=80');"></div>
+            </div>
+            
+            <div class="card no-title">
+              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1531259683007-016a7b628fc3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w-800&q=80');"></div>
+            </div>
+            
+            <div class="card no-title">
+              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w-800&q=80');"></div>
+            </div>
+            
+            <div class="card no-title">
+              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w-800&q=80');"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SEÇÃO FILMES -->
+        <section>
+          <div class="section-header">
+            <h2>Filmes em Alta</h2>
+            <a href="#" class="section-link">
+              Ver Todos <i class="fas fa-chevron-right"></i>
+            </a>
+          </div>
+          
+          <div class="row">
+            <div class="card no-title">
+              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1535016120720-40c646be5580?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w-800&q=80');"></div>
+            </div>
+            
+            <div class="card no-title">
+              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1542204165-65bf26472b9b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w-800&q=80');"></div>
+            </div>
+            
+            <div class="card no-title">
+              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1551029506-0807df4e2031?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w-800&q=80');"></div>
+            </div>
+            
+            <div class="card no-title">
+              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1489599809516-9827b6d1cf13?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w-800&q=80');"></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- MODAL DE PERFIL -->
+    <div class="profile-modal" id="profileModal">
+      <div class="profile-modal-content">
+        <div class="profile-modal-header">
+          <h2>Editar Perfil</h2>
+          <button class="close-modal" id="closeModal">&times;</button>
+        </div>
+        <div class="profile-modal-body">
+          <form class="profile-form" id="profileForm">
+            <div class="form-group">
+              <label for="userNameInput">Nome</label>
+              <input type="text" id="userNameInput" placeholder="Digite seu nome" required>
+            </div>
+            
+            <div class="form-group">
+              <label>Foto de Perfil</label>
+              <div class="avatar-preview">
+                <div class="avatar-large" id="avatarPreview">A</div>
+                <div>
+                  <p style="color: var(--hulu-gray); font-size: 13px; margin-bottom: 10px;">Escolha uma foto de perfil:</p>
+                  <div class="avatar-options">
+                    <div class="avatar-option active" style="background: linear-gradient(135deg, #1ce783, #0faf63);" data-avatar="gradient"></div>
+                    <div class="avatar-option" style="background-image: url('https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80');" data-avatar="photo1"></div>
+                    <div class="avatar-option" style="background-image: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80');" data-avatar="photo2"></div>
+                    <div class="avatar-option" style="background-image: url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80');" data-avatar="photo3"></div>
+                    <div class="avatar-option" style="background: linear-gradient(135deg, #6a11cb, #2575fc);" data-avatar="gradient2"></div>
+                  </div>
+                </div>
+              </div>
+              <input type="hidden" id="selectedAvatar" value="gradient">
+            </div>
+            
+            <div class="form-group">
+              <label for="userPlanSelect">Plano</label>
+              <select id="userPlanSelect" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px 15px; color: var(--hulu-white); font-size: 15px;">
+                <option value="Premium">Premium</option>
+                <option value="Básico">Básico</option>
+                <option value="Família">Família</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div class="profile-modal-footer">
+          <button class="btn btn-secondary" id="cancelEdit">Cancelar</button>
+          <button class="btn btn-primary" id="saveProfile">Salvar Alterações</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Dados do usuário (simulando armazenamento)
+    let userData = {
+      name: localStorage.getItem('albaUserName') || 'Alex Silva',
+      avatar: localStorage.getItem('albaUserAvatar') || 'gradient',
+      plan: localStorage.getItem('albaUserPlan') || 'Premium',
+      notifications: JSON.parse(localStorage.getItem('albaUserNotifications')) || []
+    };
+
+    // Dados de notificações
+    let notifications = [
+      { id: 1, title: 'Novo episódio disponível', message: 'O episódio 5 de "Destaque da Semana" está disponível', time: 'Há 10 minutos', icon: 'fas fa-play', read: false },
+      { id: 2, title: 'Atualização do plano', message: 'Seu plano Premium foi renovado com sucesso', time: 'Há 2 horas', icon: 'fas fa-crown', read: false },
+      { id: 3, title: 'Recomendação para você', message: 'Baseado no seu histórico, você pode gostar de "Aventura Radical"', time: 'Há 1 dia', icon: 'fas fa-film', read: false },
+      { id: 4, title: 'Evento ao vivo', message: 'Transmissão ao vivo de futebol começa em 30 minutos', time: 'Há 2 dias', icon: 'fas fa-broadcast-tower', read: true },
+      { id: 5, title: 'Atualização do app', message: 'Nova versão do Alba+ disponível com melhorias', time: 'Há 3 dias', icon: 'fas fa-mobile-alt', read: true }
+    ];
+
+    // Salvar notificações no localStorage
+    if (!localStorage.getItem('albaUserNotifications')) {
+      localStorage.setItem('albaUserNotifications', JSON.stringify(notifications));
+    } else {
+      notifications = JSON.parse(localStorage.getItem('albaUserNotifications'));
+    }
+
+    // Atualizar contador de notificações não lidas
+    function updateNotificationCount() {
+      const unreadCount = notifications.filter(n => !n.read).length;
+      document.getElementById('notificationCount').textContent = unreadCount;
+    }
+
+    // Renderizar notificações
+    function renderNotifications() {
+      const notificationList = document.getElementById('notificationList');
+      notificationList.innerHTML = '';
+      
+      // Mostrar apenas as 5 notificações mais recentes
+      const recentNotifications = notifications.slice(0, 5);
+      
+      recentNotifications.forEach(notification => {
+        const notificationItem = document.createElement('div');
+        notificationItem.className = `notification-item ${notification.read ? '' : 'unread'}`;
+        notificationItem.dataset.id = notification.id;
+        
+        notificationItem.innerHTML = `
+          <div class="notification-icon"><i class="${notification.icon}"></i></div>
+          <div class="notification-content">
+            <h4>${notification.title}</h4>
+            <p>${notification.message}</p>
+            <div class="notification-time">${notification.time}</div>
+          </div>
+        `;
+        
+        // Marcar como lida ao clicar
+        notificationItem.addEventListener('click', () => {
+          markNotificationAsRead(notification.id);
+        });
+        
+        notificationList.appendChild(notificationItem);
+      });
+      
+      updateNotificationCount();
+    }
+
+    // Marcar notificação como lida
+    function markNotificationAsRead(id) {
+      const notification = notifications.find(n => n.id === id);
+      if (notification && !notification.read) {
+        notification.read = true;
+        localStorage.setItem('albaUserNotifications', JSON.stringify(notifications));
+        renderNotifications();
+      }
+    }
+
+    // Marcar todas como lidas
+    function markAllNotificationsAsRead() {
+      notifications.forEach(notification => {
+        notification.read = true;
+      });
+      localStorage.setItem('albaUserNotifications', JSON.stringify(notifications));
+      renderNotifications();
+    }
+
+    // Atualizar dados do usuário na interface
+    function updateUserInterface() {
+      document.getElementById('userName').textContent = userData.name;
+      document.getElementById('headerAvatar').textContent = userData.name.charAt(0);
+      document.getElementById('userAvatar').textContent = userData.name.charAt(0);
+      document.getElementById('userPlan').textContent = `Plano ${userData.plan}`;
+      
+      // Atualizar avatar com gradiente ou imagem
+      const avatarElements = document.querySelectorAll('.avatar, .avatar-large');
+      avatarElements.forEach(avatar => {
+        if (userData.avatar === 'gradient') {
+          avatar.style.background = 'linear-gradient(135deg, #1ce783, #0faf63)';
+          avatar.textContent = userData.name.charAt(0);
+          avatar.style.backgroundImage = 'none';
+        } else if (userData.avatar === 'gradient2') {
+          avatar.style.background = 'linear-gradient(135deg, #6a11cb, #2575fc)';
+          avatar.textContent = userData.name.charAt(0);
+          avatar.style.backgroundImage = 'none';
+        } else {
+          // Para fotos
+          avatar.style.backgroundImage = `url('${getAvatarUrl(userData.avatar)}')`;
+          avatar.textContent = '';
+        }
+      });
+    }
+
+    // Obter URL do avatar
+    function getAvatarUrl(avatarType) {
+      switch(avatarType) {
+        case 'photo1': return 'https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80';
+        case 'photo2': return 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80';
+        case 'photo3': return 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80';
+        default: return '';
+      }
+    }
+
+    // Salvar perfil no localStorage
+    function saveProfile() {
+      userData.name = document.getElementById('userNameInput').value;
+      userData.avatar = document.getElementById('selectedAvatar').value;
+      userData.plan = document.getElementById('userPlanSelect').value;
+      
+      // Salvar no localStorage
+      localStorage.setItem('albaUserName', userData.name);
+      localStorage.setItem('albaUserAvatar', userData.avatar);
+      localStorage.setItem('albaUserPlan', userData.plan);
+      
+      updateUserInterface();
+      closeProfileModal();
+    }
+
+    // Abrir modal de perfil
+    function openProfileModal() {
+      document.getElementById('profileModal').classList.add('active');
+      document.getElementById('userNameInput').value = userData.name;
+      document.getElementById('userPlanSelect').value = userData.plan;
+      document.getElementById('selectedAvatar').value = userData.avatar;
+      
+      // Atualizar avatar preview
+      const avatarPreview = document.getElementById('avatarPreview');
+      if (userData.avatar === 'gradient') {
+        avatarPreview.style.background = 'linear-gradient(135deg, #1ce783, #0faf63)';
+        avatarPreview.textContent = userData.name.charAt(0);
+        avatarPreview.style.backgroundImage = 'none';
+      } else if (userData.avatar === 'gradient2') {
+        avatarPreview.style.background = 'linear-gradient(135deg, #6a11cb, #2575fc)';
+        avatarPreview.textContent = userData.name.charAt(0);
+        avatarPreview.style.backgroundImage = 'none';
+      } else {
+        avatarPreview.style.backgroundImage = `url('${getAvatarUrl(userData.avatar)}')`;
+        avatarPreview.textContent = '';
+      }
+      
+      // Ativar opção de avatar selecionada
+      document.querySelectorAll('.avatar-option').forEach(option => {
+        option.classList.remove('active');
+        if (option.dataset.avatar === userData.avatar) {
+          option.classList.add('active');
+        }
+      });
+    }
+
+    // Fechar modal de perfil
+    function closeProfileModal() {
+      document.getElementById('profileModal').classList.remove('active');
+    }
+
+    // Inicializar
+    document.addEventListener('DOMContentLoaded', function() {
+      // Carregar dados do usuário
+      updateUserInterface();
+      renderNotifications();
+      
+      // Menu toggle para mobile
+      document.getElementById('menuToggle').addEventListener('click', function() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('active');
+      });
+      
+      // Fechar menu ao clicar em um item (em telas pequenas)
+      document.querySelectorAll('nav li').forEach(item => {
+        item.addEventListener('click', function() {
+          if (window.innerWidth <= 768) {
+            document.getElementById('sidebar').classList.remove('active');
+          }
+        });
+      });
+      
+      // Notificações
+      document.getElementById('notificationBtn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.getElementById('notificationDropdown').classList.toggle('active');
+      });
+      
+      document.getElementById('markAllRead').addEventListener('click', function(e) {
+        e.stopPropagation();
+        markAllNotificationsAsRead();
+      });
+      
+      // Fechar dropdown de notificações ao clicar fora
+      document.addEventListener('click', function() {
+        document.getElementById('notificationDropdown').classList.remove('active');
+      });
+      
+      // Prevenir fechamento ao clicar dentro do dropdown
+      document.getElementById('notificationDropdown').addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+      
+      // Perfil do usuário
+      document.getElementById('userProfile').addEventListener('click', openProfileModal);
+      document.getElementById('headerAvatar').addEventListener('click', openProfileModal);
+      
+      // Opções de avatar
+      document.querySelectorAll('.avatar-option').forEach(option => {
+        option.addEventListener('click', function() {
+          document.querySelectorAll('.avatar-option').forEach(o => o.classList.remove('active'));
+          this.classList.add('active');
+          document.getElementById('selectedAvatar').value = this.dataset.avatar;
+          
+          // Atualizar preview
+          const avatarPreview = document.getElementById('avatarPreview');
+          if (this.dataset.avatar === 'gradient') {
+            avatarPreview.style.background = 'linear-gradient(135deg, #1ce783, #0faf63)';
+            avatarPreview.textContent = document.getElementById('userNameInput').value.charAt(0) || 'A';
+            avatarPreview.style.backgroundImage = 'none';
+          } else if (this.dataset.avatar === 'gradient2') {
+            avatarPreview.style.background = 'linear-gradient(135deg, #6a11cb, #2575fc)';
+            avatarPreview.textContent = document.getElementById('userNameInput').value.charAt(0) || 'A';
+            avatarPreview.style.backgroundImage = 'none';
+          } else {
+            avatarPreview.style.backgroundImage = `url('${getAvatarUrl(this.dataset.avatar)}')`;
+            avatarPreview.textContent = '';
+          }
+        });
+      });
+      
+      // Modal de perfil
+      document.getElementById('closeModal').addEventListener('click', closeProfileModal);
+      document.getElementById('cancelEdit').addEventListener('click', closeProfileModal);
+      document.getElementById('saveProfile').addEventListener('click', saveProfile);
+      
+      // Salvar perfil ao pressionar Enter no formulário
+      document.getElementById('profileForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        saveProfile();
+      });
+      
+      // Atualizar avatar preview quando o nome mudar
+      document.getElementById('userNameInput').addEventListener('input', function() {
+        const selectedAvatar = document.getElementById('selectedAvatar').value;
+        const avatarPreview = document.getElementById('avatarPreview');
+        
+        if (selectedAvatar === 'gradient' || selectedAvatar === 'gradient2') {
+          avatarPreview.textContent = this.value.charAt(0) || 'A';
+        }
+      });
+      
+      // Adicionar à lista
+      document.getElementById('addToList').addEventListener('click', function() {
+        // Adicionar notificação
+        const newNotification = {
+          id: notifications.length + 1,
+          title: 'Adicionado à sua lista',
+          message: '"Destaque da Semana" foi adicionado à Minha Lista',
+          time: 'Agora mesmo',
+          icon: 'fas fa-bookmark',
+          read: false
+        };
+        
+        notifications.unshift(newNotification);
+        localStorage.setItem('albaUserNotifications', JSON.stringify(notifications));
+        renderNotifications();
+        
+        // Mostrar confirmação
+        this.innerHTML = '<i class="fas fa-check"></i> Adicionado';
+        this.style.background = 'rgba(28, 231, 131, 0.1)';
+        this.style.color = 'var(--hulu-green)';
+        this.style.borderColor = 'var(--hulu-green)';
+        
+        setTimeout(() => {
+          this.innerHTML = '<i class="fas fa-plus"></i> Minha Lista';
+          this.style.background = '';
+          this.style.color = '';
+          this.style.borderColor = '';
+        }, 2000);
+      });
+      
+      // Efeito de digitação no título do hero
+      const heroTitle = document.querySelector('.hero h1');
+      const originalText = heroTitle.textContent;
+      heroTitle.textContent = '';
+      
+      let i = 0;
+      function typeWriter() {
+        if (i < originalText.length) {
+          heroTitle.textContent += originalText.charAt(i);
+          i++;
+          setTimeout(typeWriter, 50);
+        }
+      }
+      
+      setTimeout(typeWriter, 500);
+    });
+  </script>
+</body>
+</html>
