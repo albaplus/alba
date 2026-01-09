@@ -631,8 +631,6 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.1) 100%),
-      url("https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?auto=format&fit=crop&w=800&q=70");
       background-size: cover;
       background-position: center;
       z-index: -1;
@@ -782,6 +780,7 @@
       background: var(--hulu-dark);
       cursor: pointer;
       border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: transform 0.3s ease;
     }
 
     .card:hover {
@@ -823,6 +822,79 @@
 
     .card.no-title .card-overlay {
       display: none;
+    }
+
+    /* Modal de "Em Breve" */
+    .soon-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2001;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .soon-modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .soon-modal-content {
+      background: var(--hulu-darker);
+      border-radius: 15px;
+      width: 90%;
+      max-width: 400px;
+      border: 1px solid rgba(28, 231, 131, 0.1);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      transform: translateY(-30px);
+      transition: transform 0.3s ease;
+      text-align: center;
+      padding: 40px 30px;
+    }
+
+    .soon-modal.active .soon-modal-content {
+      transform: translateY(0);
+    }
+
+    .soon-modal-icon {
+      font-size: 50px;
+      color: var(--hulu-green);
+      margin-bottom: 20px;
+    }
+
+    .soon-modal h3 {
+      font-size: 24px;
+      margin-bottom: 15px;
+      color: var(--hulu-white);
+    }
+
+    .soon-modal p {
+      color: var(--hulu-gray-light);
+      margin-bottom: 25px;
+      line-height: 1.5;
+    }
+
+    .soon-modal-close {
+      background: var(--hulu-green);
+      color: var(--hulu-black);
+      border: none;
+      padding: 12px 30px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .soon-modal-close:hover {
+      background: var(--hulu-green-hover);
     }
 
     /* RESPONSIVIDADE OTIMIZADA */
@@ -1094,18 +1166,18 @@
         </div>
       </div>
 
-      <!-- HERO SECTION -->
+      <!-- HERO SECTION (Dua Lipa) -->
       <div class="hero">
-        <div class="hero-background"></div>
+        <div class="hero-background" style="background-image: linear-gradient(90deg, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.1) 100%), url('https://tracklist.com.br/wp-content/uploads/media/2025/05/dua-lipa-turne-radical-optimism.jpg')"></div>
         <div class="hero-gradient"></div>
         
         <div class="hero-content">
-          <span class="hero-badge">NOVO EPISÓDIO</span>
-          <h1>Destaque da Semana</h1>
-          <p>Produção original Alba+. Drama, ambição e belas imagens. Assista agora à nova temporada exclusiva.</p>
+          <span class="hero-badge">PRODUÇÃO EXCLUSIVA</span>
+          <h1>Dua Lipa Live from Vivo Rio</h1>
+          <p>Show produção exclusiva Alba+. Assista ao show da maior estrela do pop mundial no Rio de Janeiro.</p>
           
           <div class="hero-actions">
-            <button class="hero-btn-primary">
+            <button class="hero-btn-primary" id="watchNow">
               <i class="fas fa-play"></i> Assistir Agora
             </button>
             <button class="hero-btn-secondary" id="addToList">
@@ -1115,7 +1187,7 @@
           
           <div class="hero-info">
             <span><i class="fas fa-clock"></i> 2h 15m</span>
-            <span><i class="fas fa-tag"></i> Drama, Suspense</span>
+            <span><i class="fas fa-tag"></i> Música, Show</span>
             <span><i class="fas fa-hd"></i> 4K UHD</span>
           </div>
         </div>
@@ -1133,32 +1205,23 @@
           </div>
           
           <div class="row">
-            <div class="card">
-              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=400&q=70');"></div>
+            <!-- TV Globo -->
+            <div class="card" data-live="tv-globo">
+              <div class="card-bg" style="background-image: url('https://imagem.natelinha.uol.com.br/original/globo-ganha-nova-logo-para-momentos-especiais-entenda_1750.jpeg')"></div>
               <div class="card-overlay">
-                <div class="card-title">Esportes ao Vivo</div>
+                <div class="card-title">TV Globo</div>
                 <div class="card-info">
-                  <span>Futebol</span>
+                  <span>Entretenimento</span>
                   <span>Agora</span>
                 </div>
               </div>
             </div>
             
-            <div class="card">
-              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1574267432553-4b4628081c31?auto=format&fit=crop&w=400&q=70');"></div>
+            <!-- MTV -->
+            <div class="card" data-live="mtv">
+              <div class="card-bg" style="background-image: url('https://estudioroxo.com.br/wp-content/uploads/2021/08/estudio-roxo-blog-pulsar-banner-mtv-1.jpg')"></div>
               <div class="card-overlay">
-                <div class="card-title">Notícias 24h</div>
-                <div class="card-info">
-                  <span>Jornalismo</span>
-                  <span>Agora</span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="card">
-              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?auto=format&fit=crop&w=400&q=70');"></div>
-              <div class="card-overlay">
-                <div class="card-title">Show Musical</div>
+                <div class="card-title">MTV</div>
                 <div class="card-info">
                   <span>Música</span>
                   <span>Agora</span>
@@ -1166,12 +1229,37 @@
               </div>
             </div>
             
-            <div class="card">
-              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=400&q=70');"></div>
+            <!-- GloboNews -->
+            <div class="card" data-live="globonews">
+              <div class="card-bg" style="background-image: url('https://b4224605.smushcdn.com/4224605/wp-content/uploads/2026/01/Copia-de-Copia-de-Copia-de-Copia-de-Copia-de-Copia-de-White-and-Grey-Minimalist-Daily-Vlog-YouTube-Thumbnail-69-1024x576.jpg?lossy=1&strip=1&webp=1')"></div>
               <div class="card-overlay">
-                <div class="card-title">Documentário</div>
+                <div class="card-title">GloboNews</div>
                 <div class="card-info">
-                  <span>Natureza</span>
+                  <span>Notícias</span>
+                  <span>Agora</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- BIS -->
+            <div class="card" data-live="bis">
+              <div class="card-bg" style="background-image: url('https://static.wikia.nocookie.net/tvpediabrasil/images/7/7a/CanalBIS.png/revision/latest?cb=20180708003851&path-prefix=pt-br')"></div>
+              <div class="card-overlay">
+                <div class="card-title">BIS</div>
+                <div class="card-info">
+                  <span>Música</span>
+                  <span>Agora</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Sportv -->
+            <div class="card" data-live="sportv">
+              <div class="card-bg" style="background-image: url('https://static.wikia.nocookie.net/redeglobo/images/9/94/SporTV_Logo.jpg/revision/latest?cb=20230705122353&path-prefix=pt')"></div>
+              <div class="card-overlay">
+                <div class="card-title">Sportv</div>
+                <div class="card-info">
+                  <span>Esportes</span>
                   <span>Agora</span>
                 </div>
               </div>
@@ -1179,7 +1267,7 @@
           </div>
         </section>
 
-        <!-- SEÇÃO RECOMENDADOS -->
+        <!-- SEÇÃO PARA VOCÊ -->
         <section>
           <div class="section-header">
             <h2>Para Você</h2>
@@ -1189,48 +1277,61 @@
           </div>
           
           <div class="row">
-            <div class="card no-title">
-              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=400&q=70');"></div>
+            <!-- Estrela da Casa -->
+            <div class="card no-title" data-for-you="estrela-da-casa">
+              <div class="card-bg" style="background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj8d5BMuZDB_u_3_jHnhuHLuYs8IXfmt8UMimVi07U36NUBLjerpXHWMjnPSS96j4LCH_qLawy1Oo2JwGHQuPVsYQNKmeLrusQrijNxNkvukvr5NvD_PsizGZYsjZ1oWhksrXSOFL-kbchPl25cND4T7LtP36iTj9ZMkoUJ6qRzF4iOoM-fMVNbHwnD-Z0a/s320/estrela%20da%20casa.jpg')"></div>
             </div>
             
-            <div class="card no-title">
-              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1489599809516-9827b6d1cf13?auto=format&fit=crop&w=400&q=70');"></div>
+            <!-- Today -->
+            <div class="card no-title" data-for-you="today">
+              <div class="card-bg" style="background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgY625pzoSGHKz-staR_3DZIc_bVL7uaFkl0l0Lm4ukrDwkTUvH36Sgy9q7FfTa0Cz5Y0P-PTI3GSZ5_-weGa1V52KMmOhWxn_PTo6KIUi966MKCNApNhxF7yu44_wyssBfxiGoVBz4wibaXY9sJGTSxsL_LTKXa9kjOK9GoySY4AE_WJ_vX-wiGu7CGGHF/s320/today.jpg')"></div>
             </div>
             
-            <div class="card no-title">
-              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1531259683007-016a7b628fc3?auto=format&fit=crop&w=400&q=70');"></div>
+            <!-- TVZ -->
+            <div class="card no-title" data-for-you="tvz">
+              <div class="card-bg" style="background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiZ6F9e2VBdoyfQQ-lYJcCe9vG3Rhinnx_2BWRSIXrtl5Vr2p5rEEpisaggt4Nm45zefeeaVgfOTB97p5tHwUuh1EVUx78sHLv2GvAIF4bLpfebfTdk14nYHM8bdDkv8LGwQIBJ0I1v0q7Uf5uzuMkFxXDK4c-0RaZIbWZJiMGSYBSLCSD0GlodCmIfM6BV/s320/tvz.jpg')"></div>
             </div>
             
-            <div class="card no-title">
-              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=400&q=70');"></div>
+            <!-- HITS -->
+            <div class="card no-title" data-for-you="hits">
+              <div class="card-bg" style="background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgkgnDy8A_Zi13z05SLgxoWSp2Em1A97Cp3Kkd71bkMrSpO8zyRFl4yHYx25XTUpkEseAviZEF4nzZj4Ma91-D8nXskTmF4bLWr9wCp2B8cxRtRae4vHKzQ9l9K2HYUUQ-4OaT4JdUBVzAYVrhc0p2NbOI4P_rNo-1TE0VFUp9Vo-rTID9iODsaijx-j1bo/s320/HITS.jpg')"></div>
+            </div>
+            
+            <!-- SNL -->
+            <div class="card no-title" data-for-you="snl">
+              <div class="card-bg" style="background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEixXA8aOGwJno5ZX45vrJEmJDr7MX7gE0PACjwHGoRMnloKPHT9GmJUUt4xExC84nYnJFNGmGzdqYhf3mocZk-ybq1ALSUX2L3EzHrddT-rfs20YH0Ur0-inVOofJ8E89IC9AO2UeHgLJLVzP68-2qqjnHgdb7ekwWDPsAdPLhCzPYz7u3-oWo0XzHihT9z/s320/snl.jpg')"></div>
+            </div>
+            
+            <!-- 1 -->
+            <div class="card no-title" data-for-you="1">
+              <div class="card-bg" style="background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhw_cdYBTa72WxG-pPZ4-j-QeBs9pby6FQ6PAGuwUNoV-NTcYGRm-oM8Pqr3CiFvEZvdn26B0qSlpuAIBBxJnZv6tHoPPz9GNlla5Y-puZRANtKw-y2nVicJUXTL-qhK7EvtSGfw-VSM6lr-Gscrir2x_saS7QVGmm9e10jOuS8WoQa7wkGflZ9oUX297-G/s320/1.jpg')"></div>
             </div>
           </div>
         </section>
 
-        <!-- SEÇÃO FILMES -->
+        <!-- SEÇÃO MUSIC VIDEOS (antiga Filmes em Alta) -->
         <section>
           <div class="section-header">
-            <h2>Filmes em Alta</h2>
+            <h2>Music Videos</h2>
             <a href="#" class="section-link">
               Ver Todos <i class="fas fa-chevron-right"></i>
             </a>
           </div>
           
           <div class="row">
-            <div class="card no-title">
-              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1535016120720-40c646be5580?auto=format&fit=crop&w=400&q=70');"></div>
+            <!-- Crazy in Love -->
+            <div class="card no-title" data-music="crazy-in-love">
+              <div class="card-bg" style="background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEipUJHFCIn5FHdMsnXyIsRHwiCUbVf9JyBlaORqp9tSAfMi01DFfhen0UL-trVnrbZt-_thEvr4FOJDczzZ96RiImaXiVv3_HJGYkbLqQa-3Tf2tNJiDXgUzvhZxrlzkDCW2bAVhTjCH29yL6d5gHOLg5hDFizmVZ6Mo_ozz-2s3Zyu2juonQPEh0Nl8ddd/s320/crazyy.jpg')"></div>
             </div>
             
-            <div class="card no-title">
-              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1542204165-65bf26472b9b?auto=format&fit=crop&w=400&q=70');"></div>
+            <!-- The Best -->
+            <div class="card no-title" data-music="the-best">
+              <div class="card-bg" style="background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEholBKa0p7nI46d4f4Uql_JV6upgC9gva0WekYq2iPL3s31yfHM9o8a-B0c-W6MCcw3PT8Ql6pGZZIgXhR1q_D-9o-Ub2qRtYFYeNoO6g59YVZP3dhCeCpHoX5nNrNIO9WRCKLeX438ZT8iae7duOXv3t4WIkW0gnnI1iGyiDnAyKnCpT23ikJq3o7JrCVs/s320/thebst.jpg')"></div>
             </div>
             
-            <div class="card no-title">
-              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1551029506-0807df4e2031?auto=format&fit=crop&w=400&q=70');"></div>
-            </div>
-            
-            <div class="card no-title">
-              <div class="card-bg" style="background-image: url('https://images.unsplash.com/photo-1489599809516-9827b6d1cf13?auto=format&fit=crop&w=400&q=70');"></div>
+            <!-- BOOM -->
+            <div class="card no-title" data-music="boom">
+              <div class="card-bg" style="background-image: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhgDwGwKCJ08PnyzJhZKGuMu_qGKWSmTMAsx7BFZnbMY9-RUT96WYgH2Toxzajn0QUzoS7M_SRI1isX_jCS1coRT5Go7zvwTpiMA7KGuiEZ16wLmWeF9-ts1zk9lvHYRCl6iqyJQYRuLSIJSGiLd_9S15DuOeYCsDcnWpMSyyhdtKasqpFpIpNXGoxf13UC/s320/BOOM.jpg')"></div>
             </div>
           </div>
         </section>
@@ -1280,6 +1381,18 @@
           <button class="btn btn-secondary" id="cancelEdit">Cancelar</button>
           <button class="btn btn-primary" id="saveProfile">Salvar Alterações</button>
         </div>
+      </div>
+    </div>
+
+    <!-- MODAL "EM BREVE" -->
+    <div class="soon-modal" id="soonModal">
+      <div class="soon-modal-content">
+        <div class="soon-modal-icon">
+          <i class="fas fa-hourglass-half"></i>
+        </div>
+        <h3>Em Breve</h3>
+        <p>Este conteúdo estará disponível em breve no Alba+.</p>
+        <button class="soon-modal-close" id="closeSoonModal">OK</button>
       </div>
     </div>
   </div>
@@ -1421,6 +1534,26 @@
       document.getElementById('profileModal').classList.remove('active');
     }
 
+    // Abrir modal "Em Breve"
+    function openSoonModal() {
+      document.getElementById('soonModal').classList.add('active');
+    }
+
+    // Fechar modal "Em Breve"
+    function closeSoonModal() {
+      document.getElementById('soonModal').classList.remove('active');
+    }
+
+    // Redirecionar para live.html (para os canais ao vivo)
+    function goToLive() {
+      window.location.href = 'live.html';
+    }
+
+    // Redirecionar para Crazyinlove.html
+    function goToCrazyInLove() {
+      window.location.href = '/PGM/Crazyinlove.html';
+    }
+
     // Inicialização otimizada
     document.addEventListener('DOMContentLoaded', function() {
       // Carregar dados iniciais
@@ -1487,12 +1620,22 @@
       document.getElementById('cancelEdit').addEventListener('click', closeProfileModal);
       document.getElementById('saveProfile').addEventListener('click', saveProfile);
       
-      // Adicionar à lista
+      // Modal "Em Breve"
+      document.getElementById('closeSoonModal').addEventListener('click', closeSoonModal);
+      
+      // Fechar modal "Em Breve" ao clicar fora
+      document.getElementById('soonModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+          closeSoonModal();
+        }
+      });
+      
+      // Adicionar à lista (botão hero)
       document.getElementById('addToList').addEventListener('click', function() {
         const newNotification = {
           id: notifications.length + 1,
           title: 'Adicionado à sua lista',
-          message: '"Destaque da Semana" foi adicionado à Minha Lista',
+          message: '"Dua Lipa Live from Vivo Rio" foi adicionado à Minha Lista',
           time: 'Agora mesmo',
           icon: 'fas fa-bookmark',
           read: false
@@ -1510,6 +1653,33 @@
           this.innerHTML = '<i class="fas fa-plus"></i> Minha Lista';
           this.disabled = false;
         }, 1500);
+      });
+      
+      // Botão "Assistir Agora" do hero - mostra modal "Em Breve"
+      document.getElementById('watchNow').addEventListener('click', openSoonModal);
+      
+      // Cards "Ao Vivo Agora" - redirecionam para live.html
+      document.querySelectorAll('[data-live]').forEach(card => {
+        card.addEventListener('click', goToLive);
+      });
+      
+      // Cards "Para Você" - mostram modal "Em Breve"
+      document.querySelectorAll('[data-for-you]').forEach(card => {
+        card.addEventListener('click', openSoonModal);
+      });
+      
+      // Cards "Music Videos"
+      const musicCards = document.querySelectorAll('[data-music]');
+      musicCards.forEach((card, index) => {
+        card.addEventListener('click', function() {
+          if (index === 0) {
+            // Primeiro card: redireciona para Crazyinlove.html
+            goToCrazyInLove();
+          } else {
+            // Outros cards: mostram modal "Em Breve"
+            openSoonModal();
+          }
+        });
       });
       
       // Lazy loading para imagens dos cards
